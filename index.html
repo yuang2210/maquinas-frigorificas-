@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Forca - Refrigeração</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #e3f2fd; 
+            color: #455a64; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+        }
+        #game-wrapper {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 40px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(187, 222, 251, 0.5);
+            max-width: 1000px;
+            width: 95%;
+        }
+        canvas { background: #f8fbff; border-radius: 15px; border: 3px solid #bbdefb; }
+        .info-side { display: flex; flex-direction: column; justify-content: center; }
+        #palavra-display { 
+            font-family: 'Courier New', monospace; 
+            font-size: 2.2rem; 
+            letter-spacing: 5px; 
+            margin-bottom: 25px;
+            color: #64b5f6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .stats { font-size: 1.1rem; margin-bottom: 20px; color: #90a4ae; line-height: 1.6; }
+        .letras-tentadas { color: #f06292; font-weight: bold; letter-spacing: 2px; }
+        button { 
+            padding: 14px 30px; border: none; border-radius: 12px; 
+            cursor: pointer; font-weight: bold; 
+            background: #90caf9; color: white;
+            transition: 0.3s;
+        }
+        button:hover { background: #64b5f6; }
+    </style>
+</head>
+<body>
+
+<div id="game-wrapper">
+    <div class="visual-side">
+        <canvas id="forca" width="300" height="400"></canvas>
+    </div>
+    <div class="info-side">
+        <div id="palavra-display"></div>
+        <div class="stats">
+            Erros: <span id="erros-count">0</span> / 6<br>
+            Tentativas: <span id="tentativas" class="letras-tentadas"></span>
+        </div>
+        <button onclick="resetar()">Novo Jogo</button>
+    </div>
+</div>
+
+<script>
+    const listaPalavras = [
+        "maquinas frigorificas", 
+        "compressor", 
+        "valvula de expansao", 
+        "condensador", 
+        "evaporador", 
+        "john standard", 
+        "fluido refrigerante", 
+        "sistema de refrigeração"
+    ];
+
+    let palavra, acertos, erros;
+    const canvas = document.getElementById('forca');
+    const ctx = canvas.getContext('2d');
+
+    // Remove acentos para comparar a lógica, mas mantém o visual original
+    const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    function resetar() {
+        palavra = listaPalavras[Math.floor(Math.random() * listaPalavras.length)].toUpperCase();
+        acertos = [" "]; // Espaço já vem liberado
+        erros = [];
+        document.getElementById('tentativas').innerText = "";
+        document.getElementById('erros-count').innerText = "0";
+        desenharBase();
+        render();
+    }
+
+    function desenharBase() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 10; ctx.strokeStyle = "#bbdefb"; ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(50, 350); ctx.lineTo(250, 350); // Base
+        ctx.moveTo(80, 350); ctx.lineTo(80, 50);   // Poste
+        ctx.lineTo(200, 50); ctx.lineTo(200, 90);  // Corda
+        ctx.stroke();
+    }
+
+    function desenharMembro(n) {
+        ctx.strokeStyle = "#90caf9"; ctx.lineWidth = 6;
+        ctx.beginPath();
+        switch(n) {
+            case 1: ctx.arc(200, 120, 30, 0, Math.PI*2); break; // Cabeça
+            case 2: ctx.moveTo(200, 150); ctx.lineTo(200, 260); break; // Tronco
+            case 3: ctx.moveTo(200, 180); ctx.lineTo(160, 220); break; // Braço E
+            case 4: ctx.moveTo(200, 180); ctx.lineTo(240, 220); break; // Braço D
+            case 5: ctx.moveTo(200, 260); ctx.lineTo(160, 320); break; // Perna E
+            case 6: ctx.moveTo(200, 260); ctx.lineTo(240, 320); break; // Perna D
+        }
+        ctx.stroke();
+    }
+
+    function render() {
+        const display = palavra.split('').map(l => {
+            if (l === " ") return " ";
+            // Compara a letra da palavra (normalizada) com o que o user acertou
+            return acertos.includes(normalizar(l)) ? l : "_";
+        }).join("");
+
+        document.getElementById('palavra-display').innerText = display;
+
+        if (!display.includes("_")) {
+            setTimeout(() => { alert("Venceu! 🎉"); resetar(); }, 100);
+        } else if (erros.length >= 6) {
+            setTimeout(() => { alert("Fim de jogo! A palavra era: " + palavra); resetar(); }, 100);
+        }
+    }
+
+    window.addEventListener('keydown', (e) => {
+        const tecla = e.key.toUpperCase();
+        const letra = normalizar(tecla);
+
+        // Bloqueia se não for letra, se for espaço ou se já tentou
+        if (!/^[A-Z]$/.test(letra) || acertos.includes(letra) || erros.includes(letra)) return;
+
+        if (normalizar(palavra).includes(letra)) {
+            acertos.push(letra);
+        } else {
+            erros.push(letra);
+            document.getElementById('tentativas').innerText = erros.join(" ");
+            document.getElementById('erros-count').innerText = erros.length;
+            desenharMembro(erros.length);
+        }
+        render();
+    });
+
+    resetar();
+</script>
+</body>
+</html>
