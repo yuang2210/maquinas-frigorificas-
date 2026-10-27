@@ -7,8 +7,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Segoe UI', sans-serif; 
-            background: #e3f2fd; 
-            color: #455a64; 
+            background: #e8f5e9; 
+            color: #1b5e20;  
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -18,33 +18,33 @@
             display: grid;
             grid-template-columns: 350px 1fr;
             gap: 40px;
-            background: #ffffff;
+            background: #006737;
             padding: 40px;
             border-radius: 25px;
-            box-shadow: 0 10px 25px rgba(187, 222, 251, 0.5);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
             max-width: 1000px;
             width: 95%;
         }
-        canvas { background: #f8fbff; border-radius: 15px; border: 3px solid #bbdefb; }
+        canvas { background: #1b7a4a; border-radius: 15px; border: 3px solid #2e7d32; }
         .info-side { display: flex; flex-direction: column; justify-content: center; }
         #palavra-display { 
             font-family: 'Courier New', monospace; 
             font-size: 2.2rem; 
             letter-spacing: 5px; 
             margin-bottom: 25px;
-            color: #64b5f6;
+            color: #a5d6a7;
             white-space: pre-wrap;
             word-wrap: break-word;
         }
-        .stats { font-size: 1.1rem; margin-bottom: 20px; color: #90a4ae; line-height: 1.6; }
-        .letras-tentadas { color: #f06292; font-weight: bold; letter-spacing: 2px; }
+        .stats { font-size: 1.1rem; margin-bottom: 20px; color: #c8e6c9; line-height: 1.6; }
+        .letras-tentadas { color: #81c784; font-weight: bold; letter-spacing: 2px; }
         button { 
             padding: 14px 30px; border: none; border-radius: 12px; 
             cursor: pointer; font-weight: bold; 
-            background: #90caf9; color: white;
+            background: #66bb6a; color: white;
             transition: 0.3s;
         }
-        button:hover { background: #64b5f6; }
+        button:hover { background: #43a047; }
     </style>
 </head>
 <body>
@@ -65,14 +65,14 @@
 
 <script>
     const listaPalavras = [
-        "maquinas frigorificas", 
-        "compressor", 
-        "valvula de expansao", 
-        "condensador", 
-        "evaporador", 
-        "john standard", 
-        "fluido refrigerante", 
-        "sistema de refrigeração"
+        "preservação", 
+        "penumoultramicroscopicosiliovulcanoconiotico", 
+        "litoral", 
+        "cachorreiras", 
+        "bromélias", 
+        "Desmatamento", 
+        "Biodiversidade", 
+        "mata atlantica"
     ];
 
     let palavra, acertos, erros;
@@ -94,7 +94,7 @@
 
     function desenharBase() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.lineWidth = 10; ctx.strokeStyle = "#bbdefb"; ctx.lineCap = "round";
+        ctx.lineWidth = 10; ctx.strokeStyle = "#a5d6a7"; ctx.lineCap = "round";
         ctx.beginPath();
         ctx.moveTo(50, 350); ctx.lineTo(250, 350); // Base
         ctx.moveTo(80, 350); ctx.lineTo(80, 50);   // Poste
@@ -103,7 +103,7 @@
     }
 
     function desenharMembro(n) {
-        ctx.strokeStyle = "#90caf9"; ctx.lineWidth = 6;
+        ctx.strokeStyle = "#81c784"; ctx.lineWidth = 6;
         ctx.beginPath();
         switch(n) {
             case 1: ctx.arc(200, 120, 30, 0, Math.PI*2); break; // Cabeça
